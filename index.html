@@ -280,53 +280,99 @@ h2 em {
 .themes-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
+  gap: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
 }
 
 @media(max-width:900px){ .themes-grid { grid-template-columns: repeat(2,1fr); } }
-@media(max-width:500px){ .themes-grid { grid-template-columns: 1fr; } }
+@media(max-width:500px){ .themes-grid { grid-template-columns: 1fr 1fr; gap: 8px; } }
 
 .theme-block {
-  background: var(--surface);
-  padding: 36px 28px;
-  position: relative;
-  overflow: hidden;
-  transition: background 0.3s;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: visible;
 }
 
-.theme-block:hover { background: var(--raised); }
+/* ── FLIP CARDS SHARED ── */
+.flip-card {
+  perspective: 1400px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
 
-.theme-block::before {
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  transform-style: preserve-3d;
+  transition: transform 0.75s cubic-bezier(0.33,1,0.68,1);
+  will-change: transform;
+}
+
+.flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+
+.flip-front, .flip-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 16px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+.flip-back { transform: rotateY(180deg); }
+
+/* ── THEME FLIP ── */
+.theme-block .flip-front {
+  background: var(--surface);
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-block .flip-front::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 2px;
-  opacity: 0;
   transition: opacity 0.3s;
 }
 
-.theme-block:hover::before { opacity: 1; }
-.t1::before { background: var(--lime); }
-.t2::before { background: var(--violet); }
-.t3::before { background: var(--orange); }
-.t4::before { background: #38bdf8; }
+.t1 .flip-front::before { background: var(--lime); }
+.t2 .flip-front::before { background: var(--violet); }
+.t3 .flip-front::before { background: var(--orange); }
+.t4 .flip-front::before { background: #38bdf8; }
+
+.theme-block .flip-back {
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  align-items: center;
+}
+
+.t1 .flip-back { background: rgba(200,245,58,0.06); border: 1px solid rgba(200,245,58,0.15); }
+.t2 .flip-back { background: rgba(124,92,252,0.08); border: 1px solid rgba(124,92,252,0.2); }
+.t3 .flip-back { background: rgba(255,107,43,0.07); border: 1px solid rgba(255,107,43,0.18); }
+.t4 .flip-back { background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.15); }
 
 .theme-big-num {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.6rem;
   color: var(--muted);
   letter-spacing: 0.12em;
-  margin-bottom: 48px;
   display: block;
 }
 
 .theme-icon {
-  font-size: 1.6rem;
-  margin-bottom: 16px;
+  font-size: 2.2rem;
   display: block;
   line-height: 1;
 }
@@ -336,7 +382,6 @@ h2 em {
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: -0.01em;
-  margin-bottom: 10px;
   line-height: 1.2;
 }
 
@@ -345,7 +390,41 @@ h2 em {
 .t3 .theme-name { color: var(--orange); }
 .t4 .theme-name { color: #38bdf8; }
 
-.theme-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.65; }
+.flip-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.t1 .flip-hint { color: var(--lime); }
+.t2 .flip-hint { color: #a98fff; }
+.t3 .flip-hint { color: var(--orange); }
+.t4 .flip-hint { color: #38bdf8; }
+.tc-deep .flip-hint { color: #a98fff; }
+.tc-white .flip-hint { color: var(--lime); }
+
+.theme-desc {
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.7;
+  opacity: 0.85;
+  text-align: center;
+}
+
+.back-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.t1 .back-label { color: var(--lime); }
+.t2 .back-label { color: #a98fff; }
+.t3 .back-label { color: var(--orange); }
+.t4 .back-label { color: #38bdf8; }
 
 /* ── TRACKS ── */
 .tracks-section {}
@@ -358,48 +437,56 @@ h2 em {
 
 @media(max-width:640px){ .tracks-grid { grid-template-columns: 1fr; } }
 
-.track-card {
+/* ── TRACK FLIP ── */
+.track-flip {
+  min-height: 340px;
+}
+
+.track-flip .flip-front,
+.track-flip .flip-back {
+  padding: 40px 36px;
   border-radius: 16px;
-  padding: 48px 44px;
-  position: relative;
-  overflow: hidden;
+}
+.track-flip .flip-front {
+  justify-content: flex-end;
+}
+
+.tc-deep .flip-front {
+  background: linear-gradient(145deg, #0b0b1e 0%, #12102a 100%);
   border: 1px solid var(--border);
 }
 
-.tc-deep {
-  background: linear-gradient(145deg, #0b0b1e 0%, #12102a 100%);
-}
-
-.tc-white {
+.tc-white .flip-front {
   background: linear-gradient(145deg, #120f08 0%, #1e180a 100%);
-  border-color: rgba(200,245,58,0.15);
+  border: 1px solid rgba(200,245,58,0.15);
 }
 
-.tc-deep::after {
-  content: 'DB';
+.tc-deep .flip-back {
+  background: linear-gradient(145deg, #100e28 0%, #180e30 100%);
+  border: 1px solid rgba(124,92,252,0.25);
+  justify-content: flex-start;
+}
+
+.tc-white .flip-back {
+  background: linear-gradient(145deg, #161200 0%, #1e1800 100%);
+  border: 1px solid rgba(200,245,58,0.2);
+  justify-content: flex-start;
+}
+
+/* ghost watermark on front */
+.track-ghost {
   position: absolute;
   bottom: -20px; right: -10px;
   font-weight: 900;
   font-size: 8rem;
-  color: rgba(124,92,252,0.06);
   letter-spacing: -0.06em;
   line-height: 1;
   pointer-events: none;
   user-select: none;
 }
 
-.tc-white::after {
-  content: 'WC';
-  position: absolute;
-  bottom: -20px; right: -10px;
-  font-weight: 900;
-  font-size: 8rem;
-  color: rgba(200,245,58,0.05);
-  letter-spacing: -0.06em;
-  line-height: 1;
-  pointer-events: none;
-  user-select: none;
-}
+.tc-deep .track-ghost { color: rgba(124,92,252,0.06); }
+.tc-white .track-ghost { color: rgba(200,245,58,0.05); }
 
 .track-badge {
   display: inline-block;
@@ -409,7 +496,7 @@ h2 em {
   font-size: 0.6rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 }
 
 .tc-deep .track-badge {
@@ -430,7 +517,7 @@ h2 em {
   letter-spacing: -0.04em;
   text-transform: uppercase;
   line-height: 0.95;
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 .tc-deep .track-name { color: #a98fff; }
@@ -440,7 +527,7 @@ h2 em {
 
 .track-body { font-size: 0.9rem; color: var(--muted); line-height: 1.72; }
 .track-note {
-  margin-top: 28px;
+  margin-top: 24px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.65rem;
   letter-spacing: 0.06em;
@@ -687,22 +774,16 @@ footer {
     line-height: 1;
   }
 
-  .themes-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 1px;
-  }
-
-  .theme-block { padding: 24px 18px; }
-  .theme-big-num { margin-bottom: 28px; }
-  .theme-icon { font-size: 1.3rem; margin-bottom: 10px; }
-  .theme-name { font-size: 0.88rem; }
-  .theme-desc { font-size: 0.78rem; }
-
-  .tracks-grid { grid-template-columns: 1fr; gap: 12px; }
-
-  .track-card { padding: 32px 24px; }
+  .themes-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .theme-block { border-radius: 12px; }
+  .flip-inner { min-height: 220px; }
+  .flip-front, .flip-back { padding: 22px 18px; }
+  .theme-big-num { margin-bottom: 0; }
+  .theme-icon { font-size: 1.5rem; margin: 8px 0; }
+  .theme-name { font-size: 0.82rem; }
+  .track-flip { min-height: 260px; }
+  .track-flip .flip-front, .track-flip .flip-back { padding: 28px 24px; }
   .track-name { font-size: 2rem; }
-  .tc-deep::after, .tc-white::after { font-size: 5rem; bottom: -10px; right: -5px; }
 
   .seg-item { gap: 0; }
   .seg-num-col { min-width: 52px; max-width: 52px; }
@@ -797,30 +878,71 @@ footer {
   <h2 class="reveal d2">Four <em>themes</em><br>one exhibition.</h2>
 
   <div class="themes-grid reveal d3">
-    <div class="theme-block t1">
-      <span class="theme-big-num">01 / 04</span>
-      <span class="theme-icon">💧</span>
-      <p class="theme-name">Resource Resilience</p>
-      <p class="theme-desc">Rethinking how we use, conserve, and innovate around water, food, and energy.</p>
+
+    <div class="theme-block t1 flip-card" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <span class="theme-big-num">01 / 04</span>
+          <span class="theme-icon">💧</span>
+          <p class="theme-name">Resource Resilience</p>
+          <span class="flip-hint">Tap to learn more →</span>
+        </div>
+        <div class="flip-back">
+          <p class="back-label">Resource Resilience</p>
+          <p class="theme-desc">Rethinking how we use, conserve, and innovate around water, food, and energy for a sustainable future.</p>
+          <span class="flip-hint">← Tap to flip back</span>
+        </div>
+      </div>
     </div>
-    <div class="theme-block t2">
-      <span class="theme-big-num">02 / 04</span>
-      <span class="theme-icon">🧠</span>
-      <p class="theme-name">The Human Experience</p>
-      <p class="theme-desc">Technology improving physical and mental well-being — from assistive tools to health solutions.</p>
+
+    <div class="theme-block t2 flip-card" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <span class="theme-big-num">02 / 04</span>
+          <span class="theme-icon">🧠</span>
+          <p class="theme-name">The Human Experience</p>
+          <span class="flip-hint">Tap to learn more →</span>
+        </div>
+        <div class="flip-back">
+          <p class="back-label">The Human Experience</p>
+          <p class="theme-desc">Leveraging technology to improve physical and mental well-being — from assistive tools to mental health solutions.</p>
+          <span class="flip-hint">← Tap to flip back</span>
+        </div>
+      </div>
     </div>
-    <div class="theme-block t3">
-      <span class="theme-big-num">03 / 04</span>
-      <span class="theme-icon">⚡</span>
-      <p class="theme-name">Kinetic Future</p>
-      <p class="theme-desc">Reimagining transport, structural physics, and the mechanics of how things move.</p>
+
+    <div class="theme-block t3 flip-card" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <span class="theme-big-num">03 / 04</span>
+          <span class="theme-icon">⚡</span>
+          <p class="theme-name">Kinetic Future</p>
+          <span class="flip-hint">Tap to learn more →</span>
+        </div>
+        <div class="flip-back">
+          <p class="back-label">Kinetic Future</p>
+          <p class="theme-desc">Reimagining transport, structural physics, and the mechanics of how things move — engineering motion for a better world.</p>
+          <span class="flip-hint">← Tap to flip back</span>
+        </div>
+      </div>
     </div>
-    <div class="theme-block t4">
-      <span class="theme-big-num">04 / 04</span>
-      <span class="theme-icon">🔬</span>
-      <p class="theme-name">Invisible Threats</p>
-      <p class="theme-desc">Confronting microbes, radiation, and cyber threats — and building smarter defences.</p>
+
+    <div class="theme-block t4 flip-card" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <span class="theme-big-num">04 / 04</span>
+          <span class="theme-icon">🔬</span>
+          <p class="theme-name">Invisible Threats</p>
+          <span class="flip-hint">Tap to learn more →</span>
+        </div>
+        <div class="flip-back">
+          <p class="back-label">Invisible Threats</p>
+          <p class="theme-desc">Confronting what we can't see — microbes, radiation, and cyber threats — and building smarter defences against them.</p>
+          <span class="flip-hint">← Tap to flip back</span>
+        </div>
+      </div>
     </div>
+
   </div>
 </section>
 
@@ -833,20 +955,45 @@ footer {
   <h2 class="reveal d2">Two tracks.<br><em>One stage.</em></h2>
 
   <div class="tracks-grid reveal d3">
-    <div class="track-card tc-deep">
-      <span class="track-badge">Research Track</span>
-      <p class="track-name">The Deep Blue</p>
-      <div class="track-divider"></div>
-      <p class="track-body">Rigorous science and engineering — backed by evidence and built with precision. Teams present working models or research papers that push the boundaries of their fields.</p>
-      <p class="track-note">Working model or research paper required</p>
+
+    <div class="flip-card track-flip tc-deep" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <span class="track-ghost">DB</span>
+          <span class="track-badge">Research Track</span>
+          <p class="track-name">The Deep Blue</p>
+          <span class="flip-hint" style="margin-top:20px;">Tap to learn more →</span>
+        </div>
+        <div class="flip-back">
+          <span class="track-badge">Research Track</span>
+          <p class="track-name" style="font-size:1.8rem; margin-bottom:0;">The Deep Blue</p>
+          <div class="track-divider"></div>
+          <p class="track-body">Rigorous science and engineering — backed by evidence and built with precision. Teams present working models or research papers that push the boundaries of their fields.</p>
+          <p class="track-note">Working model or research paper required</p>
+          <span class="flip-hint" style="margin-top:16px;">← Tap to flip back</span>
+        </div>
+      </div>
     </div>
-    <div class="track-card tc-white">
-      <span class="track-badge">Pitch Track</span>
-      <p class="track-name">The White Cap</p>
-      <div class="track-divider"></div>
-      <p class="track-body">Ideas pitched as real business ventures. Teams think like entrepreneurs — identifying problems, proposing solutions, and making their case to a room of expert judges.</p>
-      <p class="track-note">Business pitch required · Working model optional</p>
+
+    <div class="flip-card track-flip tc-white" onclick="this.classList.toggle('flipped')">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <span class="track-ghost">WC</span>
+          <span class="track-badge">Pitch Track</span>
+          <p class="track-name">The White Cap</p>
+          <span class="flip-hint" style="margin-top:20px;">Tap to learn more →</span>
+        </div>
+        <div class="flip-back">
+          <span class="track-badge">Pitch Track</span>
+          <p class="track-name" style="font-size:1.8rem; margin-bottom:0;">The White Cap</p>
+          <div class="track-divider"></div>
+          <p class="track-body">Ideas pitched as real business ventures. Teams think like entrepreneurs — identifying problems, proposing solutions, and making their case to a room of expert judges.</p>
+          <p class="track-note">Business pitch required · Working model optional</p>
+          <span class="flip-hint" style="margin-top:16px;">← Tap to flip back</span>
+        </div>
+      </div>
     </div>
+
   </div>
 </section>
 
